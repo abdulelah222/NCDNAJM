@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCD Update - Najm</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #00843D; /* Najm Green */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .logo:hover {
+            background: #f4f4f4;
+        }
+        .menu {
+            width: 100%;
+        }
+        .menu a {
+            display: block;
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 18px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        .menu a:hover {
+            background-color: #00632F; /* Darker Najm Green */
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: white; /* Clean white background */
+        }
+        .ncd-form, .exclude-vehicle-form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .ncd-form input, .exclude-vehicle-form input {
+            width: 250px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .ncd-form button, .exclude-vehicle-form button {
+            background-color: #00843D;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .ncd-form button:hover, .exclude-vehicle-form button:hover {
+            background-color: #00632F;
+        }
+    </style>
+    <script>
+        function loadNCDUpdate() {
+            document.querySelector(".content").innerHTML = `
+                <div class="ncd-form">
+                    <h2>Update NCD</h2>
+                    <input type="text" id="id_number" placeholder="Enter ID Number">
+                    <button onclick="updateNCD()">Update</button>
+                    <button onclick="fetchVehicles()">Fetch Vehicles</button>
+                    <p id="result"></p>
+                    <div id="vehicles-list"></div>
+                </div>
+                <div class="exclude-vehicle-form">
+                    <h2>Exclude Vehicle</h2>
+                    <input type="text" id="vehicle_id" placeholder="Enter Vehicle ID">
+                    <input type="text" id="ticket_number" placeholder="Enter Ticket Number">
+                    <input type="text" id="username" placeholder="Enter Username">
+                    <input type="text" id="national_id" placeholder="Enter National ID">
+                    <button onclick="excludeVehicle()">Exclude Vehicle</button>
+                    <p id="exclude-result"></p>
+                </div>
+            `;
+        }
+
+        function resetHome() {
+            document.querySelector(".content").innerHTML = `<h2>Welcome to Najm query Update System</h2>`;
+        }
+
+        function excludeVehicle() {
+            const vehicleId = document.getElementById("vehicle_id").value;
+            const ticketNumber = document.getElementById("ticket_number").value;
+            const username = document.getElementById("username").value;
+            const nationalId = document.getElementById("national_id").value;
+
+            if (!vehicleId || !ticketNumber || !username || !nationalId) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            fetch('/exclude_vehicle/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    vehicle_id: vehicleId,
+                    ticket_number: ticketNumber,
+                    username: username,
+                    national_id: nationalId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("exclude-result").innerText = data.status || data.error;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo" onclick="resetHome()">
+            <img src="najm-logo.png" alt="Najm Logo" width="80">
+        </div>
+        <div class="menu">
+            <a onclick="loadNCDUpdate()">NCD</a>
+            <a href="#">NRN</a>
+            <a href="#">DA</a>
+            <a href="#">LD</a>
+        </div>
+    </div>
+    <div class="content">
+        <h2>Welcome to Najm query Update System</h2>
+    </div>
+</body>
+</html>
